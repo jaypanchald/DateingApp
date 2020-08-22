@@ -1,3 +1,4 @@
+using Common.Injection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,9 @@ namespace DateingApp.API
             //{
             //    opts.UseSqlServer(Configuration["ConnectionString:DatingDb"]);
             //});
+
+            services.AddDatingLibrary();
+
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddCors();
         }
