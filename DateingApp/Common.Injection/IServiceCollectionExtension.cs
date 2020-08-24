@@ -7,7 +7,7 @@ namespace Common.Injection
     {
         public static IServiceCollection AddDatingLibrary(this IServiceCollection services)
         {
-            services.AddScoped<IAuthRepository, IAuthRepository>();
+            services.AddTransient<IAuthRepository, AuthRepository>();
 
             return services;
         }

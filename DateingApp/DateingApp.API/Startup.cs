@@ -1,10 +1,15 @@
 using Common.Injection;
+using DatingApp.Repository.EntityContext;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace DateingApp.API
 {
@@ -21,15 +26,28 @@ namespace DateingApp.API
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddControllers();
-            //services.AddDbContext<DatingContext>(opts =>
-            //{
-            //    opts.UseSqlServer(Configuration["ConnectionString:DatingDb"]);
-            //});
+            services.AddDbContext<DatingContext>(opts =>
+            {
+                opts.UseSqlServer(Configuration["ConnectionString:DatingDb"]);
+            });
 
             services.AddDatingLibrary();
 
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddCors();
+
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(o =>
+                {
+                    o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSetting:Token").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,30 +58,14 @@ namespace DateingApp.API
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHttpsRedirection();
-
-            //app.UseRouting();
-
-            //app.UseAuthorization();
-
-
+            app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseCors(a => a.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc();
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllers();
-            //});
-            //services.AddMvc(options => options.EnableEndpointRouting = false);
-            //app.UseCors(a => a.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller}/{action=Index}/{id?}");
-            //});
         }
     }
 }
