@@ -10,6 +10,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 
 namespace DateingApp.API
 {
@@ -53,10 +56,26 @@ namespace DateingApp.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+
+            app.UseExceptionHandler(builder =>
             {
-                app.UseDeveloperExceptionPage();
-            }
+                builder.Run(async contex =>
+                {
+                    contex.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                    var error = contex.Features.Get<IExceptionHandlerFeature>();
+                    if (error != null)
+                    {
+                        contex.Response.AddApplicationError(error.Error.Message);
+                        await contex.Response.WriteAsync(error.Error.Message);
+                    }
+                });
+            });
+
 
             app.UseHttpsRedirection();
             app.UseRouting();

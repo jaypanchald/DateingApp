@@ -33,6 +33,8 @@ namespace DateingApp.API.Controllers
         [Route("[action]")]
         public async Task<IActionResult> Register([FromBody]UserTest userModel)
         {
+            throw new Exception("It wont work");
+
             if (await _authRepository.UserExits(userModel.UserName))
             {
                 return BadRequest("User aready exist.");
