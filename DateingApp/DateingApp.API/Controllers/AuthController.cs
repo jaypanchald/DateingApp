@@ -33,7 +33,6 @@ namespace DateingApp.API.Controllers
         [Route("[action]")]
         public async Task<IActionResult> Register([FromBody]UserTest userModel)
         {
-            throw new Exception("It wont work");
 
             if (await _authRepository.UserExits(userModel.UserName))
             {
@@ -99,7 +98,7 @@ namespace DateingApp.API.Controllers
         public string UserName { get; set; }
 
         [Required]
-        [MinLength(7), MaxLength(10)]
+        [MinLength(7), MaxLength(25)]
         public string Password { get; set; }
     }
 }
