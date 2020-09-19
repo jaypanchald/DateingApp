@@ -13,6 +13,9 @@ using System.Text;
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using DatingApp.Repository.Repository;
+using AutoMapper;
+using DatingApp.Mapper;
 
 namespace DateingApp.API
 {
@@ -35,10 +38,15 @@ namespace DateingApp.API
             });
 
             services.AddDatingLibrary();
+            services.AddAutoMapper(s =>
+            {
+                s.AddProfile<AutoMapping>();
+            }, typeof(Startup));
+
 
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddCors();
-
+            //services.AddTransient<Seed>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(o =>
@@ -54,7 +62,7 @@ namespace DateingApp.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)//, Seed seeder)
         {
             //if (env.IsDevelopment())
             //{
@@ -76,7 +84,7 @@ namespace DateingApp.API
                 });
             });
 
-
+            //seeder.SeedData();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseStaticFiles();

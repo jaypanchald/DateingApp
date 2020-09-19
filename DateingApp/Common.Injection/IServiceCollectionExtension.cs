@@ -8,6 +8,8 @@ namespace Common.Injection
         public static IServiceCollection AddDatingLibrary(this IServiceCollection services)
         {
             services.AddTransient<IAuthRepository, AuthRepository>();
+            //services.AddTransient<IRepository, Repository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             return services;
         }

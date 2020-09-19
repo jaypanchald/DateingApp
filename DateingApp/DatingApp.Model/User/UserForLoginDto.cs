@@ -4,7 +4,7 @@ namespace DatingApp.Model.User
 {
     public class UserForLoginDto
     {
-        [Required, EmailAddress]
+        [Required]
         public string UserName { get; set; }
 
         [Required]

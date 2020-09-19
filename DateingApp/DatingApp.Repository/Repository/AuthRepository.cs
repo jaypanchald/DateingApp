@@ -46,7 +46,6 @@ namespace DatingApp.Repository.Repository
         {
             return await _contex.User.AnyAsync(a => a.UserName == userName);
         }
-
         private void CreatPassordHash(string password, out byte[] passwordHach, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
@@ -55,6 +54,7 @@ namespace DatingApp.Repository.Repository
                 passwordHach = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
+
 
         private bool VerifyPasswordHash(string password, byte[] passwordHach, byte[] passwordSalt)
         {

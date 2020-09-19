@@ -1,6 +1,7 @@
 ﻿using DatingApp.Model.Entity;
 using DatingApp.Model.User;
 using DatingApp.Repository.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,17 +14,22 @@ using System.Threading.Tasks;
 
 namespace DateingApp.API.Controllers
 {
+    [AllowAnonymous]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         //IAuthRepository
         public IAuthRepository _authRepository { get; }
         public IConfiguration _config { get; }
+        private IUserRepository _userRepository;
 
-        public AuthController(IAuthRepository authRepository, IConfiguration config)
+        public AuthController(IAuthRepository authRepository,
+            IUserRepository userRepository,
+            IConfiguration config)
         {
             _authRepository = authRepository;
+            _userRepository = userRepository;
             _config = config;
         }
 
@@ -88,17 +94,28 @@ namespace DateingApp.API.Controllers
             });
 
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        public ActionResult Test()
+        {
+            var userData = _userRepository.GetAll();
+
+            return Ok(userData);
+        }
     }
 
     public class UserTest
     {
-        [Required, EmailAddress]
-        [MinLength(7), MaxLength(50)]
+        [Required]
+        //[MinLength(7)]
+        [MaxLength(50)]
 
         public string UserName { get; set; }
 
         [Required]
-        [MinLength(7), MaxLength(25)]
+        //[MinLength(7)]
+        [MaxLength(25)]
         public string Password { get; set; }
     }
 }
