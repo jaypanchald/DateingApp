@@ -29,19 +29,19 @@ namespace DatingApp.Repository.Repository
         {
             return await entities.FindAsync(id);
         }
-        public void Insert(T entity)
+        public async Task<bool> Insert(T entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
 
-            _context.Add(entity);
-            _context.SaveChanges();
+            await  _context.AddAsync(entity);
+            return await _context.SaveChangesAsync() > 0;
         }
-        public void Update(T entity)
+        public async Task<bool> Update(T entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            _context.SaveChanges();
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public void Delete(int id)

@@ -1,0 +1,18 @@
+textarea{
+    width: 100%;
+}
+.img-thumbnail {
+    margin: 25px;
+    width: 85%;
+    height: 85%;
+}
+
+.card-body {
+    padding: 0 25px;
+}
+
+.card-footer {
+    padding-left: 10px 15px;
+    background-color: #303030;
+    border-top: none;
+}

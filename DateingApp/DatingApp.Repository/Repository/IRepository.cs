@@ -7,8 +7,8 @@ namespace DatingApp.Repository.Repository
     {
         Task<IEnumerable<T>> GetAll();
         Task<T> FindOne(int id);
-        void Insert(T entity);
-        void Update(T entity);
+        Task<bool> Insert(T entity);
+        Task<bool> Update(T entity);
         void Delete(int id);
     }
 }
