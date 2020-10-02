@@ -31,10 +31,16 @@ namespace DatingApp.Repository.Repository
         }
         public async Task<bool> Insert(T entity)
         {
+            
             if (entity == null) throw new ArgumentNullException("entity");
-
-            await  _context.AddAsync(entity);
-            return await _context.SaveChangesAsync() > 0;
+            try
+            {
+                await _context.AddAsync(entity);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch(Exception ex)
+            { throw ex; }
+            //return false;
         }
         public async Task<bool> Update(T entity)
         {
@@ -44,11 +50,25 @@ namespace DatingApp.Repository.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public void Delete(int id)
+        public async Task<bool> UpdateAll(List<T> entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> Delete(int id)
         {
             T existing = entities.Find(id);
             _context.Remove(existing);
-            _context.SaveChanges();
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> Delete(T entity)
+        {
+            _context.Remove(entity);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

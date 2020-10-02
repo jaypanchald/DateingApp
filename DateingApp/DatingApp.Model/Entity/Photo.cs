@@ -20,6 +20,9 @@ namespace DatingApp.Model.Entity
 
         public bool IsMain { get; set; }
 
+        [StringLength(250)]
+        public string PublicId { get; set; }
+
         public int UserId { get; set; }
 
         public User User { get; set; }

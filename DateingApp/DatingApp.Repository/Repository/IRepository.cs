@@ -9,6 +9,8 @@ namespace DatingApp.Repository.Repository
         Task<T> FindOne(int id);
         Task<bool> Insert(T entity);
         Task<bool> Update(T entity);
-        void Delete(int id);
+        Task<bool> UpdateAll(List<T> entity);
+        Task<bool> Delete(int id);
+        Task<bool> Delete(T entity);
     }
 }

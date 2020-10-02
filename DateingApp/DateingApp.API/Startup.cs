@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using DatingApp.Repository.Repository;
 using AutoMapper;
 using DatingApp.Mapper;
+using DateingApp.FileStorage;
 
 namespace DateingApp.API
 {
@@ -46,6 +47,7 @@ namespace DateingApp.API
 
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddCors();
+            services.Configure<CloudinarySetting>(Configuration.GetSection("CloudinarySettings"));
             //services.AddTransient<Seed>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -64,25 +66,29 @@ namespace DateingApp.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)//, Seed seeder)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-
-            app.UseExceptionHandler(builder =>
+            if (env.IsDevelopment())
             {
-                builder.Run(async contex =>
-                {
-                    contex.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
 
-                    var error = contex.Features.Get<IExceptionHandlerFeature>();
-                    if (error != null)
+
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async contex =>
                     {
-                        contex.Response.AddApplicationError(error.Error.Message);
-                        await contex.Response.WriteAsync(error.Error.Message);
-                    }
+                        contex.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                        var error = contex.Features.Get<IExceptionHandlerFeature>();
+                        if (error != null)
+                        {
+                            contex.Response.AddApplicationError(error.Error.Message);
+                            await contex.Response.WriteAsync(error.Error.Message);
+                        }
+                    });
                 });
-            });
+            }
 
             //seeder.SeedData();
             app.UseHttpsRedirection();
