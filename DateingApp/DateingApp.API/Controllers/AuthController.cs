@@ -1,4 +1,5 @@
-﻿using DatingApp.Model.Entity;
+﻿using AutoMapper;
+using DatingApp.Model.Entity;
 using DatingApp.Model.User;
 using DatingApp.Repository.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,14 +25,17 @@ namespace DateingApp.API.Controllers
         public IAuthRepository _authRepository { get; }
         public IConfiguration _config { get; }
         private IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
         public AuthController(IAuthRepository authRepository,
             IUserRepository userRepository,
-            IConfiguration config)
+            IConfiguration config,
+            IMapper mapper)
         {
             _authRepository = authRepository;
             _userRepository = userRepository;
             _config = config;
+            _mapper = mapper;
         }
 
 
@@ -84,13 +89,15 @@ namespace DateingApp.API.Controllers
             };
 
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-
-
-
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+            var userView = _mapper.Map<UserListDto>(user);
+
             return Ok(new
             {
-                token = tokenHandler.WriteToken(token)
+                token = tokenHandler.WriteToken(token),
+                userPhoto = user?.Photos?.FirstOrDefault(f => f.IsMain)?.Url,
+                user = userView
             });
 
         }

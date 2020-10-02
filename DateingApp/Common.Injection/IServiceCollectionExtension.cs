@@ -1,5 +1,7 @@
-﻿using DatingApp.Repository.Repository;
+﻿using DateingApp.FileStorage;
+using DatingApp.Repository.Repository;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Common.Injection
 {
@@ -10,6 +12,9 @@ namespace Common.Injection
             services.AddTransient<IAuthRepository, AuthRepository>();
             //services.AddTransient<IRepository, Repository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IPhotoRepository, PhotoRepository>();
+
+            services.AddTransient<IFileHelper, FileHelper>();
 
             return services;
         }

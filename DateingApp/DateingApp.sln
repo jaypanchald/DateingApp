@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatingApp.Model", "DatingAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatingApp.Repository", "DatingApp.Repository\DatingApp.Repository.csproj", "{9B1ECB8B-2C0E-4559-8B89-94F3C81B4D70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Injection", "Common.Injection\Common.Injection.csproj", "{A031FA81-A5CC-4FFA-9FBA-02C92BCF2E83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatingApp.Mapper", "DatingApp.Mapper\DatingApp.Mapper.csproj", "{1FD950A4-CAEC-41CB-A320-2D989DB753E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatingApp.Mapper", "DatingApp.Mapper\DatingApp.Mapper.csproj", "{1FD950A4-CAEC-41CB-A320-2D989DB753E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DateingApp.FileStorage", "DateingApp,FileStorage\DateingApp.FileStorage.csproj", "{3BDFBF37-8832-46B4-9DF7-047B677A4D80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Injection", "Common.Injection\Common.Injection.csproj", "{7AB2F592-4EC7-4C0B-BE0A-90E98691756B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +33,18 @@ Global
 		{9B1ECB8B-2C0E-4559-8B89-94F3C81B4D70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B1ECB8B-2C0E-4559-8B89-94F3C81B4D70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B1ECB8B-2C0E-4559-8B89-94F3C81B4D70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A031FA81-A5CC-4FFA-9FBA-02C92BCF2E83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A031FA81-A5CC-4FFA-9FBA-02C92BCF2E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A031FA81-A5CC-4FFA-9FBA-02C92BCF2E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A031FA81-A5CC-4FFA-9FBA-02C92BCF2E83}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1FD950A4-CAEC-41CB-A320-2D989DB753E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1FD950A4-CAEC-41CB-A320-2D989DB753E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FD950A4-CAEC-41CB-A320-2D989DB753E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FD950A4-CAEC-41CB-A320-2D989DB753E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BDFBF37-8832-46B4-9DF7-047B677A4D80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BDFBF37-8832-46B4-9DF7-047B677A4D80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BDFBF37-8832-46B4-9DF7-047B677A4D80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BDFBF37-8832-46B4-9DF7-047B677A4D80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AB2F592-4EC7-4C0B-BE0A-90E98691756B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AB2F592-4EC7-4C0B-BE0A-90E98691756B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AB2F592-4EC7-4C0B-BE0A-90E98691756B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AB2F592-4EC7-4C0B-BE0A-90E98691756B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
