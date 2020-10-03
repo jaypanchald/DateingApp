@@ -17,6 +17,7 @@ using DatingApp.Repository.Repository;
 using AutoMapper;
 using DatingApp.Mapper;
 using DateingApp.FileStorage;
+using DateingApp.API.Helper;
 
 namespace DateingApp.API
 {
@@ -44,8 +45,11 @@ namespace DateingApp.API
                 s.AddProfile<AutoMapping>();
             }, typeof(Startup));
 
-
-            services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddTransient<LogUserActivity>();
+            services.AddMvc(options => { 
+                options.EnableEndpointRouting = false;
+                options.Filters.AddService<LogUserActivity>();
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddCors();
             services.Configure<CloudinarySetting>(Configuration.GetSection("CloudinarySettings"));
             //services.AddTransient<Seed>();

@@ -24,8 +24,12 @@
                     </div>
                     <div>
                         <strong>Last Active:</strong>
-                        <p>{{user.lastActive}}</p>
+                        <p>{{user.lastActive | timeAgo}}</p>
                     </div>
+                    <div>
+                        <strong>Member Since:</strong>
+                        <p>{{user.created | date: 'mediumDate'}}</p>
+                      </div>
                     <div class="card-footer">
                         <button class="btn btn-success btn-block" 
                         [disabled]="!editForm.dirty" 

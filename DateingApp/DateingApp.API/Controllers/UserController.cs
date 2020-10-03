@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration.Conventions;
+using DateingApp.API.Helper;
 using DatingApp.Model.Entity;
 using DatingApp.Model.User;
 using DatingApp.Repository.Repository;
@@ -10,12 +10,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DateingApp.API.Controllers
-{ 
+{
+
+    [ServiceFilter(typeof(LogUserActivity))]
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-
-
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
