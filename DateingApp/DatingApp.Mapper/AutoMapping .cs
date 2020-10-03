@@ -28,12 +28,10 @@ namespace DatingApp.Mapper
                 });
 
             CreateMap<Photo, PhotoDto>();
-
             CreateMap<UserForUpdateDto, User>();
-
             CreateMap<Photo, PhotoForReturnDto>();
             CreateMap<PhotoForCreationDto, Photo>();
-            
+            CreateMap<UserRegisterDto, User>();
         }
 
         public static int CalculateAge(DateTime date)
