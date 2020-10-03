@@ -9,6 +9,7 @@ export interface User {
     lastActive: Date;
     city: string;
     country: string;
+    created: Date;
     intrests?: string;
     interests?: string;
     introduction?: string;
