@@ -42,7 +42,7 @@ namespace DateingApp.API.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> Register([FromBody]UserTest userModel)
+        public async Task<IActionResult> Register([FromBody] UserRegisterDto userModel)
         {
 
             if (await _authRepository.UserExits(userModel.UserName))
@@ -50,13 +50,11 @@ namespace DateingApp.API.Controllers
                 return BadRequest("User aready exist.");
             }
 
-            User user = new User()
-            {
-                UserName = userModel.UserName
-            };
+            var user = _mapper.Map<User>(userModel);
+            var createdUser = await _authRepository.Register(user, userModel.Password);
+            var userToReturn = _mapper.Map<UserDataDto>(createdUser);
 
-            await _authRepository.Register(user, userModel.Password);
-
+            //return CreatedAtRoute("GetUser", new { controller = "User", id = createdUser.Id}, userToReturn);
             return StatusCode(201);
         }
 
@@ -110,19 +108,5 @@ namespace DateingApp.API.Controllers
 
             return Ok(userData);
         }
-    }
-
-    public class UserTest
-    {
-        [Required]
-        //[MinLength(7)]
-        [MaxLength(50)]
-
-        public string UserName { get; set; }
-
-        [Required]
-        //[MinLength(7)]
-        [MaxLength(25)]
-        public string Password { get; set; }
     }
 }
