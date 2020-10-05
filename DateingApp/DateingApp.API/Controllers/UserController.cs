@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DateingApp.API.Helper;
 using DatingApp.Model.Entity;
+using DatingApp.Model.Helper;
 using DatingApp.Model.User;
 using DatingApp.Repository.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -30,10 +31,22 @@ namespace DateingApp.API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult> GetUsers()
+        public async Task<ActionResult> GetUsers([FromQuery]UserParams param)
         {
-            IEnumerable<User> users = await _userRepository.GetAllUsers();
+            param.UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if (string.IsNullOrWhiteSpace(param.Gender))
+            {
+                var userFromRepo = await _userRepository.GetUser(param.UserId);
+                param.Gender = userFromRepo.Gender == "male" ? "female" : "male";
+            }
+            
+
+            var users = await _userRepository.GetFilterUser(param);
             var result = _mapper.Map<IEnumerable<User>, IEnumerable<UserListDto>>(users);
+
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount,
+                users.TotalPages);
             return Ok(result);
         }
 
