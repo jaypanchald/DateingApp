@@ -43,6 +43,18 @@ namespace DatingApp.Repository.Repository
                 users = users.Where(w => w.DateOfBirth >= minDob && w.DateOfBirth <= maxDob);
             }
 
+            if (param.Likers)
+            {
+                var userLikers = await GetUserLikers(param.UserId, param.Likers);
+                users = users.Where(w => userLikers.Contains(w.Id));
+            }
+
+            if (param.Likees)
+            {
+                var userLikers = await GetUserLikers(param.UserId, param.Likers);
+                users = users.Where(w => userLikers.Contains(w.Id));
+            }
+
             if (!string.IsNullOrEmpty(param.OrderBy))
             {
                 switch (param.OrderBy)
@@ -59,6 +71,25 @@ namespace DatingApp.Repository.Repository
             return await PagedList<User>.CreateAsync(users, 
                 param.PageNumber,
                 param.PageSize);
+        }
+
+        private async Task<IEnumerable<int>> GetUserLikers(int id, bool likers)
+        {
+            var users = await _contex.User
+                    .Include(i => i.Likers)
+                    .Include(i => i.Likees)
+                    .FirstOrDefaultAsync(f => f.Id == id);
+
+            if (likers)
+            {
+                return users.Likers.Where(w => w.LikeeId == id)
+                    .Select(s => s.LikerId);
+            }
+            else
+            {
+                return users.Likees.Where(w => w.LikerId == id)
+                    .Select(s => s.LikeeId);
+            }
         }
 
         public async Task<User> GetUser(int id)

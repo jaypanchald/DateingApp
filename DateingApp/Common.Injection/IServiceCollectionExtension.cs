@@ -13,6 +13,7 @@ namespace Common.Injection
             //services.AddTransient<IRepository, Repository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPhotoRepository, PhotoRepository>();
+            services.AddTransient<ILikeRepository, LikeRepository>();
 
             services.AddTransient<IFileHelper, FileHelper>();
 
