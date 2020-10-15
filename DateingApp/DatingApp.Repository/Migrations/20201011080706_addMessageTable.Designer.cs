@@ -4,14 +4,16 @@ using DatingApp.Repository.EntityContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DatingApp.Repository.Migrations
 {
     [DbContext(typeof(DatingContext))]
-    partial class DatingContextModelSnapshot : ModelSnapshot
+    [Migration("20201011080706_addMessageTable")]
+    partial class addMessageTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

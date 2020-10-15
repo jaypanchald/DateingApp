@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DatingApp.Model.Entity;
+using DatingApp.Model.Message;
 using DatingApp.Model.Photo;
 using DatingApp.Model.User;
 using System;
@@ -32,6 +33,13 @@ namespace DatingApp.Mapper
             CreateMap<Photo, PhotoForReturnDto>();
             CreateMap<PhotoForCreationDto, Photo>();
             CreateMap<UserRegisterDto, User>();
+            CreateMap<MessageForCreateaDto, Message>();
+
+            CreateMap<Message, MessageToReturnDto>()
+                .ForMember(m => m.SenderPhotoUrl, opt => opt
+                    .MapFrom(u => u.Sender.Photos.FirstOrDefault(f => f.IsMain).Url))
+                .ForMember(f => f.RecipientPhotoUrl, opt => opt
+                    .MapFrom(u => u.Recipient.Photos.FirstOrDefault(f => f.IsMain).Url));
         }
 
         public static int CalculateAge(DateTime date)
