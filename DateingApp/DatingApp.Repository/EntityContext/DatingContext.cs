@@ -18,7 +18,7 @@ namespace DatingApp.Repository.EntityContext
 
         public DbSet<Like> Like { get; set; }
 
-
+        public DbSet<Message> Message { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -43,6 +43,17 @@ namespace DatingApp.Repository.EntityContext
                .HasOne(u => u.Liker)
                .WithMany(u => u.Likees )
                .HasForeignKey(u => u.LikerId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+
+            builder.Entity<Message>()
+               .HasOne(u => u.Sender)
+               .WithMany(u => u.MessagesSend)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Message>()
+               .HasOne(u => u.Recipient)
+               .WithMany(u => u.MessagesReceived)
                .OnDelete(DeleteBehavior.Restrict);
         }
     }

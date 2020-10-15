@@ -33,7 +33,9 @@ namespace DateingApp.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             services.AddDbContext<DatingContext>(opts =>
             {
                 opts.UseSqlServer(Configuration["ConnectionString:DatingDb"]);
@@ -46,7 +48,8 @@ namespace DateingApp.API
             }, typeof(Startup));
 
             services.AddTransient<LogUserActivity>();
-            services.AddMvc(options => { 
+            services.AddMvc(options =>
+            {
                 options.EnableEndpointRouting = false;
                 options.Filters.AddService<LogUserActivity>();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);

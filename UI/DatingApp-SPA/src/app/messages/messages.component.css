@@ -1,0 +1,15 @@
+table {
+    margin-top: 15ps;
+}
+
+.img-circle {
+    max-height: 50px;
+}
+
+td {
+    vertical-align: middle;
+}
+
+tr td {
+    color: #ffffff;
+}
