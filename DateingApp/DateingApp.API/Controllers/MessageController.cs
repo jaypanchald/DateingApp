@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using DateingApp.API.Helper;
-using DatingApp.Model.Entity;
-using DatingApp.Model.Helper;
-using DatingApp.Model.Message;
-using DatingApp.Repository.Repository;
+using Dating.Model.Entity;
+using Dating.Model.Helper;
+using Dating.Model.Message;
+using Dating.Repository.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

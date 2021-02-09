@@ -1,4 +1,4 @@
-﻿using DatingApp.Model.Entity;
+﻿using Dating.Model.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.Repository.EntityContext

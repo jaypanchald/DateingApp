@@ -1,4 +1,4 @@
-﻿using DatingApp.Model.Entity;
+﻿using Dating.Model.Entity;
 using DatingApp.Repository.EntityContext;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System;
 using System.IO.Pipelines;
 using DatingApp.Repository.PagedList;
-using DatingApp.Model.Helper;
+using Dating.Model.Helper;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Storage;
 

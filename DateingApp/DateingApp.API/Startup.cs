@@ -1,5 +1,5 @@
 using Common.Injection;
-using DatingApp.Repository.EntityContext;
+using Dating.Repository.EntityContext;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +13,14 @@ using System.Text;
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using DatingApp.Repository.Repository;
+using Dating.Repository.Repository;
 using AutoMapper;
 using DatingApp.Mapper;
 using DateingApp.FileStorage;
 using DateingApp.API.Helper;
+using Dating.Model.Entity;
+using Microsoft.AspNetCore.Identity;
+using DateingApp.API.Services;
 
 namespace DateingApp.API
 {
@@ -42,6 +45,8 @@ namespace DateingApp.API
             });
 
             services.AddDatingLibrary();
+            services.AddTransient<ITokenService, TokenService>();
+            
             services.AddAutoMapper(s =>
             {
                 s.AddProfile<AutoMapping>();
@@ -55,7 +60,19 @@ namespace DateingApp.API
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddCors();
             services.Configure<CloudinarySetting>(Configuration.GetSection("CloudinarySettings"));
+
+            //Seeder
             //services.AddTransient<Seed>();
+
+            services.AddIdentityCore<User>(opt =>
+            {
+                opt.Password.RequireNonAlphanumeric = false;
+            })
+                .AddRoles<AppRole>()
+                .AddRoleManager<RoleManager<AppRole>>()
+                .AddSignInManager<SignInManager<User>>()
+                .AddRoleValidator<RoleValidator<AppRole>>()
+                .AddEntityFrameworkStores<DatingContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(o =>
@@ -63,11 +80,18 @@ namespace DateingApp.API
                     o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSetting:Token").Value)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSetting:TokenKey").Value)),
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
                 });
+
+            //for identity polict role
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                opt.AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

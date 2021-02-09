@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using DatingApp.Model.Entity;
-using DatingApp.Model.User;
-using DatingApp.Repository.Repository;
+using DateingApp.API.Services;
+using Dating.Model.Entity;
+using Dating.Model.User;
+using Dating.Repository.Repository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -21,21 +23,29 @@ namespace DateingApp.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        //IAuthRepository
         public IAuthRepository _authRepository { get; }
         public IConfiguration _config { get; }
         private IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly ITokenService _tokenService;
 
         public AuthController(IAuthRepository authRepository,
-            IUserRepository userRepository,
-            IConfiguration config,
-            IMapper mapper)
+             IUserRepository userRepository,
+             IConfiguration config,
+             IMapper mapper,
+              ITokenService tokenService,
+         UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _authRepository = authRepository;
             _userRepository = userRepository;
             _config = config;
             _mapper = mapper;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
 
@@ -51,8 +61,16 @@ namespace DateingApp.API.Controllers
             }
 
             var user = _mapper.Map<User>(userModel);
-            var createdUser = await _authRepository.Register(user, userModel.Password);
-            var userToReturn = _mapper.Map<UserDataDto>(createdUser);
+
+            var result = await _userManager.CreateAsync(user, userModel.Password);
+
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+            //var createdUser = await _authRepository.Register(user, userModel.Password);
+            //var userToReturn = _mapper.Map<UserDataDto>(createdUser);
 
             //return CreatedAtRoute("GetUser", new { controller = "User", id = createdUser.Id}, userToReturn);
             return StatusCode(201);
@@ -60,40 +78,29 @@ namespace DateingApp.API.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> Login([FromBody]UserForLoginDto userModel)
+        public async Task<IActionResult> Login([FromBody] UserForLoginDto userModel)
         {
             var user = await _authRepository.Login(userModel.UserName, userModel.Password);
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("invalid username or password.");
             }
 
-            Claim[] claims = new[]
+            var result = await _signInManager.CheckPasswordSignInAsync
+                (user, userModel.Password, false);
+
+            if (!result.Succeeded)
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
-            };
+                return Unauthorized("invalid username or password.");
+            }
 
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSetting:Token").Value));
-
-            SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(1),
-                SigningCredentials = creds
-            };
-
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
             var userView = _mapper.Map<UserListDto>(user);
 
             return Ok(new
             {
-                token = tokenHandler.WriteToken(token),
+                token = _tokenService.CreateToken(user).Result,
                 userPhoto = user?.Photos?.FirstOrDefault(f => f.IsMain)?.Url,
                 user = userView
             });

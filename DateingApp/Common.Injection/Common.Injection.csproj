@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DateingApp,FileStorage\DateingApp.FileStorage.csproj" />
-    <ProjectReference Include="..\DatingApp.Model\DatingApp.Model.csproj" />
-    <ProjectReference Include="..\DatingApp.Repository\DatingApp.Repository.csproj" />
+    <ProjectReference Include="..\Dating.Model\Dating.Model.csproj" />
+    <ProjectReference Include="..\Dating.Repository\Dating.Repository.csproj" />
   </ItemGroup>
 
 </Project>

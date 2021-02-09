@@ -1,4 +1,4 @@
-﻿using DatingApp.Repository.Repository;
+﻿using Dating.Repository.Repository;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using System.Threading.Tasks;

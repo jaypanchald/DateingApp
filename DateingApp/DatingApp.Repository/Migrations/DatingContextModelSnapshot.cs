@@ -19,7 +19,7 @@ namespace DatingApp.Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Like", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Like", b =>
                 {
                     b.Property<int>("LikerId")
                         .HasColumnType("int");
@@ -34,7 +34,7 @@ namespace DatingApp.Repository.Migrations
                     b.ToTable("Like");
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Message", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Message", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,7 +75,7 @@ namespace DatingApp.Repository.Migrations
                     b.ToTable("Message");
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Photo", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Photo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +110,7 @@ namespace DatingApp.Repository.Migrations
                     b.ToTable("Photo");
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.User", b =>
+            modelBuilder.Entity("Dating.Model.Entity.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -171,39 +171,39 @@ namespace DatingApp.Repository.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Like", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Like", b =>
                 {
-                    b.HasOne("DatingApp.Model.Entity.User", "Likee")
+                    b.HasOne("Dating.Model.Entity.User", "Likee")
                         .WithMany("Likers")
                         .HasForeignKey("LikeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DatingApp.Model.Entity.User", "Liker")
+                    b.HasOne("Dating.Model.Entity.User", "Liker")
                         .WithMany("Likees")
                         .HasForeignKey("LikerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Message", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Message", b =>
                 {
-                    b.HasOne("DatingApp.Model.Entity.User", "Recipient")
+                    b.HasOne("Dating.Model.Entity.User", "Recipient")
                         .WithMany("MessagesReceived")
                         .HasForeignKey("Recipientid")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DatingApp.Model.Entity.User", "Sender")
+                    b.HasOne("Dating.Model.Entity.User", "Sender")
                         .WithMany("MessagesSend")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Photo", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Photo", b =>
                 {
-                    b.HasOne("DatingApp.Model.Entity.User", "User")
+                    b.HasOne("Dating.Model.Entity.User", "User")
                         .WithMany("Photos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using DatingApp.Model.Entity;
-using DatingApp.Model.Message;
-using DatingApp.Model.Photo;
-using DatingApp.Model.User;
+using Dating.Model.Entity;
+using Dating.Model.Message;
+using Dating.Model.Photo;
+using Dating.Model.User;
 using System;
 using System.Linq;
 

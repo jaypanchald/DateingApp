@@ -1,5 +1,5 @@
-﻿using DatingApp.Model.Entity;
-using DatingApp.Repository.Repository;
+﻿using Dating.Model.Entity;
+using Dating.Repository.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;

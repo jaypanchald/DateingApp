@@ -32,6 +32,9 @@ export class AuthService {
             localStorage.setItem('user', JSON.stringify(user.user));
             this.decodeToken = this.jwtHelperService.decodeToken(user.token);
             this.currentUser = user.user;
+            this.currentUser.roles = [];
+            const roles = this.decodeToken.role;
+            Array.isArray(roles) ? this.currentUser.roles = roles : this.currentUser.roles.push(roles);
             this.changeMemberPhoto(this.currentUser.photoUrl);
           }
         })
@@ -46,6 +49,10 @@ export class AuthService {
   isLoggedIn() {
     const token = localStorage.getItem('token');
     return !this.jwtHelperService.isTokenExpired(token);
+  }
+
+  getDecodedToken(token) {
+    return JSON.parse(atob(token.split('.')[1]));
   }
 
 }

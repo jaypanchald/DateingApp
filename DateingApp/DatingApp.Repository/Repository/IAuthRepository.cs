@@ -1,4 +1,4 @@
-﻿using DatingApp.Model.Entity;
+﻿using Dating.Model.Entity;
 using System.Threading.Tasks;
 
 namespace DatingApp.Repository.Repository

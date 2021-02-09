@@ -19,9 +19,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Common.Injection\Common.Injection.csproj" />
     <ProjectReference Include="..\DateingApp,FileStorage\DateingApp.FileStorage.csproj" />
+    <ProjectReference Include="..\Dating.Model\Dating.Model.csproj" />
+    <ProjectReference Include="..\Dating.Repository\Dating.Repository.csproj" />
     <ProjectReference Include="..\DatingApp.Mapper\DatingApp.Mapper.csproj" />
-    <ProjectReference Include="..\DatingApp.Model\DatingApp.Model.csproj" />
-    <ProjectReference Include="..\DatingApp.Repository\DatingApp.Repository.csproj" />
   </ItemGroup>
 
 

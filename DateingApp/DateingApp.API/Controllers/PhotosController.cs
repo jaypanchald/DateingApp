@@ -2,9 +2,9 @@
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using DateingApp.FileStorage;
-using DatingApp.Model.Entity;
-using DatingApp.Model.Photo;
-using DatingApp.Repository.Repository;
+using Dating.Model.Entity;
+using Dating.Model.Photo;
+using Dating.Repository.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;

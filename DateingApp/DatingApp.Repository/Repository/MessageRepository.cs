@@ -1,5 +1,5 @@
-﻿using DatingApp.Model.Entity;
-using DatingApp.Model.Helper;
+﻿using Dating.Model.Entity;
+using Dating.Model.Helper;
 using DatingApp.Repository.EntityContext;
 using DatingApp.Repository.PagedList;
 using Microsoft.EntityFrameworkCore;

@@ -21,7 +21,7 @@ namespace DatingApp.Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Photo", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Photo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace DatingApp.Repository.Migrations
                     b.ToTable("Photo");
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.User", b =>
+            modelBuilder.Entity("Dating.Model.Entity.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -117,9 +117,9 @@ namespace DatingApp.Repository.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("DatingApp.Model.Entity.Photo", b =>
+            modelBuilder.Entity("Dating.Model.Entity.Photo", b =>
                 {
-                    b.HasOne("DatingApp.Model.Entity.User", "User")
+                    b.HasOne("Dating.Model.Entity.User", "User")
                         .WithMany("Photos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

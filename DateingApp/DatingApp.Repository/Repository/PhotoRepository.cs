@@ -1,4 +1,4 @@
-﻿using DatingApp.Model.Entity;
+﻿using Dating.Model.Entity;
 using DatingApp.Repository.EntityContext;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
