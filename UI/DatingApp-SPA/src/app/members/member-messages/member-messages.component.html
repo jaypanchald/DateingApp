@@ -1,12 +1,12 @@
 <div class="card">
   <div class="card-body">
-    <div *ngIf="messages?.length === 0">
+    <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
       <p>No messages yet... say hi my using the mesage box below</p>
     </div>
-    <ul class="chat">
-      <li *ngFor="let message of messages">
+    <ul class="chat" *ngIf="(messageService.messageThread$ | async).length > 0">
+      <li *ngFor="let message of (messageService.messageThread$ | async)">
         <!-- to them -->
-        <div *ngIf="message.senderId == recipientId">
+        <div *ngIf="message.senderUsername == username">
           <span class="chat-img float-left">
             <img src="{{message.senderPhotoUrl}}" alt="" class="rounded-circle">
           </span>
@@ -21,7 +21,7 @@
           </div>
         </div>
         <!-- to me -->
-        <div *ngIf="message.senderId != recipientId">
+        <div *ngIf="message.senderUsername != username">
           <span class="chat-img float-right">
             <img src="{{message.senderPhotoUrl}}" alt="" class="rounded-circle">
           </span>
@@ -41,16 +41,21 @@
     </ul>
   </div>
   <div class="card-footer">
-    <form #messageForm="ngForm" (ngSubmit)="messageForm.valid && sendMessage()">
+    <form #messageForm="ngForm" 
+      (ngSubmit)="messageForm.valid && sendMessage()">
       <div class="input-group">
         <input type="text"
           class="form-control input-sm" 
           placeholder="send a private message"
-          [(ngModel)]="newMessage.content"
-          name="content"
-          required>
+          [(ngModel)]="messageContent"
+          name="messageContent"
+          required
+        >
         <div class="input-group-append">
-          <button class="btn btn-primary" [disabled]="!messageForm.valid" >Send</button>
+          <button class="btn btn-primary" 
+            [disabled]="!messageForm.valid">
+            Send
+          </button>
         </div>
       </div>
     </form>

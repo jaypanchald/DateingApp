@@ -40,6 +40,8 @@ namespace DatingApp.Mapper
                     .MapFrom(u => u.Sender.Photos.FirstOrDefault(f => f.IsMain).Url))
                 .ForMember(f => f.RecipientPhotoUrl, opt => opt
                     .MapFrom(u => u.Recipient.Photos.FirstOrDefault(f => f.IsMain).Url));
+
+            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
         }
 
         public static int CalculateAge(DateTime date)

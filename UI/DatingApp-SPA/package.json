@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^6.0.3",
     "@angular/router": "^6.0.3",
     "@auth0/angular-jwt": "^2.0.0",
+    "@microsoft/signalr": "^3.1.8",
     "alertifyjs": "^1.13.1",
     "bootstrap": "^4.5.2",
     "bootswatch": "^4.1.1",

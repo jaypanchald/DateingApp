@@ -35,10 +35,7 @@ export class NavComponent implements OnInit {
     return this.authService.isLoggedIn();
   }
   logOut() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.authService.currentUser = null;
-    this.authService.decodeToken = null;
+    this.authService.logout();
     this.router.navigate(['/']);
   }
 }

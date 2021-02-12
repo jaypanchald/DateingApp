@@ -13,15 +13,20 @@
         </button>
       </li>
       <li class="list-inline-item">
-        <button class="btn btn-primary">
-          <i class="fa fa-envelope" [routerLink]="['/members/', user.id]" 
-          [queryParams]="{tab: 3}"></i>
+        <button class="btn btn-primary"
+          [routerLink]="['/members/', user.id]" 
+          [queryParams]="{tab: 3}">
+          <i class="fa fa-envelope"></i>
         </button>
       </li>
     </ul>
   </div>
   <div class="card-body p-1">
-    <h6 class="card-title text-center mb-1"><i class="fa fa-user"></i>
+    <h6 class="card-title text-center mb-1">
+      <span [class.is-online]="(presence.onlineUser$ | async).includes(user.userName)">
+        <i class="fa fa-user"></i>
+      </span>
+
       {{user.knownAs}}, {{user.age}}
     </h6>
     <p class="card-text text-muted text-center">{{user.city}}</p>

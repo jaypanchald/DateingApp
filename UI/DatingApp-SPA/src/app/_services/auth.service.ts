@@ -5,6 +5,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
 import { BehaviorSubject } from 'rxjs';
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,9 @@ export class AuthService {
   currentUser: User;
   photoUrl = new BehaviorSubject<string>('../../assets/16.1 user.png.png');
   currentPhotoUrl = this.photoUrl.asObservable();
-  constructor(private http: HttpClient) { }
+
+  constructor(private http: HttpClient,
+    private presence: PresenceService) { }
 
   changeMemberPhoto(photoUrl: string) {
     this.photoUrl.next(photoUrl);
@@ -36,6 +39,7 @@ export class AuthService {
             const roles = this.decodeToken.role;
             Array.isArray(roles) ? this.currentUser.roles = roles : this.currentUser.roles.push(roles);
             this.changeMemberPhoto(this.currentUser.photoUrl);
+            this.presence.createHubConnection(user);
           }
         })
       );
@@ -55,4 +59,11 @@ export class AuthService {
     return JSON.parse(atob(token.split('.')[1]));
   }
 
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.currentUser = null;
+    this.decodeToken = null;
+    this.presence.stopHubConnection();
+  }
 }

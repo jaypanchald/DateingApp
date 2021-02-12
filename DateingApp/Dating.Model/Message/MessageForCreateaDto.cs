@@ -10,6 +10,7 @@ namespace Dating.Model.Message
         public int SenderId { get; set; }
 
         public int RecipientId { get; set; }
+        public string RecipientUsername { get; set; }
 
         public DateTime MessageSent { get; set; }
 

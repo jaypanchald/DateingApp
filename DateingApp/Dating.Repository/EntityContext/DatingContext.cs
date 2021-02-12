@@ -24,6 +24,9 @@ namespace Dating.Repository.EntityContext
 
         public DbSet<Message> Message { get; set; }
 
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Connection> Connections { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(connectionString);

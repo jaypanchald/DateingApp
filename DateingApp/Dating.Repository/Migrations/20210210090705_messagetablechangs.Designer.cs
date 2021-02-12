@@ -4,14 +4,16 @@ using Dating.Repository.EntityContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Dating.Repository.Migrations
 {
     [DbContext(typeof(DatingContext))]
-    partial class DatingContextModelSnapshot : ModelSnapshot
+    [Migration("20210210090705_messagetablechangs")]
+    partial class messagetablechangs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,34 +63,6 @@ namespace Dating.Repository.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
-                });
-
-            modelBuilder.Entity("Dating.Model.Entity.Connection", b =>
-                {
-                    b.Property<string>("ConnectionId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("GroupName")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ConnectionId");
-
-                    b.HasIndex("GroupName");
-
-                    b.ToTable("Connections");
-                });
-
-            modelBuilder.Entity("Dating.Model.Entity.Group", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Name");
-
-                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Dating.Model.Entity.Like", b =>
@@ -393,13 +367,6 @@ namespace Dating.Repository.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Dating.Model.Entity.Connection", b =>
-                {
-                    b.HasOne("Dating.Model.Entity.Group", null)
-                        .WithMany("Connections")
-                        .HasForeignKey("GroupName");
                 });
 
             modelBuilder.Entity("Dating.Model.Entity.Like", b =>

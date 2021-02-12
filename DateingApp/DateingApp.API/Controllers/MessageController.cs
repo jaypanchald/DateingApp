@@ -3,11 +3,13 @@ using DateingApp.API.Helper;
 using Dating.Model.Entity;
 using Dating.Model.Helper;
 using Dating.Model.Message;
+using Dating.Repository.PagedList;
 using Dating.Repository.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -21,96 +23,132 @@ namespace DateingApp.API.Controllers
     {
 
         private readonly IMessageRepository _messageRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IPhotoRepository _photoRepository;
         private readonly IMapper _mapper;
 
         public MessageController(IMessageRepository messageRepository,
-        IMapper mapper)
+            IUserRepository userRepository,
+            IPhotoRepository photoRepository,
+            IMapper mapper)
         {
             _messageRepository = messageRepository;
+            _userRepository = userRepository;
+            _photoRepository = photoRepository;
             _mapper = mapper;
         }
 
-        [HttpGet("{userId}/{id}", Name = "GetMessage")]
-        public async Task<ActionResult> GetMessage(int userId, int id)
+        [HttpPost]
+        public async Task<IActionResult> CreateMessage(MessageForCreateaDto messageDto)
         {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            var username = User.Identity.Name;
+            if (username.ToLower() == messageDto.RecipientUsername.ToLower())
             {
-                return Unauthorized();
+                return BadRequest("You cannot send message to your self.");
             }
 
-            Message messagFromRepo = await _messageRepository.GetMessage(id);
+            User sernder = await _userRepository.GetUserbyUsername(username);
+            User recipient = await _userRepository.GetUserbyUsername(messageDto.RecipientUsername);
 
-            if (messagFromRepo == null)
+            if (recipient == null)
             {
                 return NotFound();
             }
 
-            MessageToReturnDto messageToReturn = _mapper.Map<MessageToReturnDto>(messagFromRepo);
-
-            return Ok(messageToReturn);
-        }
-
-
-        [HttpGet("GetMessagesForUser/{userId}")]
-        public async Task<ActionResult> GetMessagesForUser(int userId,
-            [FromQuery] MessageParams param)
-        {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            var message = new Message
             {
-                return Unauthorized();
+                Sender = sernder,
+                Recipient = recipient,
+                Content = messageDto.Content,
+                SenderUsername = sernder.UserName,
+                SenderId = sernder.Id,
+                RecipientUsername = recipient.UserName,
+                Recipientid = recipient.Id
+            };
+
+            if (await _messageRepository.Insert(message))
+            {
+                
+                var result = _mapper.Map<MessageToReturnDto>(message);
+                if (string.IsNullOrWhiteSpace(result.RecipientPhotoUrl))
+                {
+                    var photos = await _photoRepository.GetListOfPhotosOfUser(message.Recipientid);
+                    if (photos != null && photos.Any())
+                    {
+                        result.RecipientPhotoUrl = photos.FirstOrDefault(f => f.IsMain).Url;
+                    }
+                }
+                if (string.IsNullOrWhiteSpace(result.SenderPhotoUrl))
+                {
+                    var photos = await _photoRepository.GetListOfPhotosOfUser(message.SenderId);
+                    if (photos != null && photos.Any())
+                    {
+                        result.SenderPhotoUrl = photos.FirstOrDefault(f => f.IsMain).Url;
+                    }
+                }
+                return Ok(result);
             }
 
-            param.UserId = userId;
-
-            var messagFromRepo = await _messageRepository.GetMessagesFprUser(param);
-
-            var messages = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagFromRepo);
-
-            Response.AddPagination(messagFromRepo.CurrentPage, messagFromRepo.PageSize,
-                messagFromRepo.TotalCount, messagFromRepo.TotalPages);
-
-            return Ok(messages);
+            return BadRequest("Failed to send message");
         }
 
-        [HttpGet("thread/{userId}/{recipientId}")]
-        public async Task<ActionResult> GetMessageThread(int userId, int recipientId)
+        [HttpGet]
+        public async Task<ActionResult> GetMessagesForUser(
+           [FromQuery] MessageParams param)
         {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-            {
-                return Unauthorized();
-            }
+            param.Username = User.Identity.Name;
 
-            var messagFromRepo = await _messageRepository.GetMessageThread(userId, recipientId);
+            PagedList<Message> messagFromRepo = await _messageRepository.GetMessagesForUser(param);
 
+            IEnumerable<MessageToReturnDto> messages = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagFromRepo);
+            var result = new PagedList<MessageToReturnDto>(messages.ToList(), messagFromRepo.TotalCount, messagFromRepo.TotalPages, messagFromRepo.PageSize);
+
+            Response.AddPagination(param.PageNumber, result.PageSize,
+                result.TotalCount, result.TotalPages);
+
+            return Ok(result);
+        }
+
+        [HttpGet("thread/{username}")]
+        public async Task<ActionResult> GetMessageThread(string username)
+        {
+            var messagFromRepo = await _messageRepository.GetMessageThread(User.Identity.Name, username);
             var messageThread = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagFromRepo);
 
             return Ok(messageThread);
         }
 
-
-        [HttpPost("{userId}")]
-        public async Task<IActionResult> CreateMessage(int userId,
-            MessageForCreateaDto messageDto)
+        [HttpDelete]
+        public async Task<ActionResult> DeleteMessage(int id)
         {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            var username = User.Identity.Name;
+            var message = await _messageRepository.GetMessage(id);
+
+            if (message.Sender.UserName != username 
+                && message.Recipient.UserName != username)
             {
                 return Unauthorized();
             }
 
-            messageDto.SenderId = userId;
+            if (message.Sender.UserName == username)
+                message.SenderDeleted = true;
 
-            var message = _mapper.Map<Message>(messageDto);
+            if (message.Recipient.UserName == username)
+                message.RecipientDeleted = true;
 
-            if (await _messageRepository.Insert(message))
+            if (message.SenderDeleted && message.RecipientDeleted)
             {
-                message = await _messageRepository.GetMessageThread(message.Id);
-
-                var messageToReturn = _mapper.Map<MessageToReturnDto>(message);
-
-                return CreatedAtRoute("GetMessage", new { userId, id = message.Id }, messageToReturn);
+                if (await _messageRepository.Delete(message))
+                {
+                    return Ok();
+                }
+            }
+            else if (message.SenderDeleted || message.RecipientDeleted)
+            {
+                return Ok();
             }
 
-            throw new Exception("Create the message failed on save. ");
+            return BadRequest("Problem deleteding the message.");
         }
 
         [HttpPost("DeleteMessage/{userId}/{id}")]

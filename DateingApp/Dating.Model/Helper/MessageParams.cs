@@ -26,6 +26,9 @@ namespace Dating.Model.Helper
 
         public int UserId { get; set; }
 
-        public string MessageContainer { get; set; } = "Unread";
+        public string Container { get; set; } = "Unread";
+
+        public string Username { get; set; }
+
     }
 }

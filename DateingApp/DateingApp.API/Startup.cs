@@ -21,6 +21,8 @@ using DateingApp.API.Helper;
 using Dating.Model.Entity;
 using Microsoft.AspNetCore.Identity;
 using DateingApp.API.Services;
+using DateingApp.API.SignalR;
+using System.Threading.Tasks;
 
 namespace DateingApp.API
 {
@@ -44,9 +46,10 @@ namespace DateingApp.API
                 opts.UseSqlServer(Configuration["ConnectionString:DatingDb"]);
             });
 
+            services.AddSingleton<PresenceTracker>();
             services.AddDatingLibrary();
             services.AddTransient<ITokenService, TokenService>();
-            
+
             services.AddAutoMapper(s =>
             {
                 s.AddProfile<AutoMapping>();
@@ -58,7 +61,21 @@ namespace DateingApp.API
                 options.EnableEndpointRouting = false;
                 options.Filters.AddService<LogUserActivity>();
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            services.AddCors();
+            //services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder
+                        .WithOrigins("http://localhost:4200")
+                        //.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+            });
+            services.AddSignalR();
             services.Configure<CloudinarySetting>(Configuration.GetSection("CloudinarySettings"));
 
             //Seeder
@@ -84,6 +101,22 @@ namespace DateingApp.API
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
+
+                    o.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrWhiteSpace(accessToken) &&
+                                path.StartsWithSegments("/hubs"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             //for identity polict role
@@ -97,14 +130,13 @@ namespace DateingApp.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)//, Seed seeder)
         {
+            app.UseCors();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-
-
                 app.UseExceptionHandler(builder =>
                 {
                     builder.Run(async contex =>
@@ -128,8 +160,27 @@ namespace DateingApp.API
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors(a => a.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            //app.UseCors(a => a.AllowAnyHeader()
+            //        .AllowAnyMethod()
+            //        .AllowCredentials()
+            //        .WithOrigins("http://localhost:4200", "https://5702a4a5d0b6.ngrok.io")
+            //        );
+
+            
+            //app.UseSignalR(routes =>
+            //{
+            //    routes.MapHub<PresenceHub>("/hubs/presence");
+            //});
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<PresenceHub>("hubs/presence");
+                endpoints.MapHub<MessageHub>("hubs/message");
+            });
+
             app.UseMvc();
+
+           
         }
     }
 }

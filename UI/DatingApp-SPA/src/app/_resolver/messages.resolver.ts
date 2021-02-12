@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AlertyfyService } from '../_services/alertify.service';
 import { AuthService } from '../_services/auth.service';
+import { MessageService } from '../_services/message.service';
 import { UserService } from '../_services/user.service';
 
 @Injectable()
@@ -13,14 +14,14 @@ pageNumber = 1;
 pageSize = 5;
     messageContainer = 'Unread';
 
-    constructor(private userServie: UserService,
+    constructor(private messageService: MessageService,
         private authService: AuthService,
         private router: Router,
         private alertify: AlertyfyService
     ) { }
 
     resolve(route: ActivatedRouteSnapshot): Observable<Message[]> {
-        return this.userServie.getMessages(this.authService.decodeToken.nameid,
+        return this.messageService.getMessages(
              this.pageNumber, this.pageSize, this.messageContainer).pipe(
             catchError(error => {
                 console.log(error);

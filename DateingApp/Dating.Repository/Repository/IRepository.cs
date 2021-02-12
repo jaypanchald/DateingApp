@@ -12,5 +12,6 @@ namespace Dating.Repository.Repository
         Task<bool> UpdateAll(List<T> entity);
         Task<bool> Delete(int id);
         Task<bool> Delete(T entity);
+        Task<bool> SaveChangesAsync();
     }
 }

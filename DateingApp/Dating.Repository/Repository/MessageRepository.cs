@@ -11,71 +11,117 @@ namespace Dating.Repository.Repository
 {
     public interface IMessageRepository : IRepository<Message>
     {
+        Task AddGroup(Group group);
+        Task RemoveConnection(Connection connection);
+        Task<Connection> GetConnection(string connectionId);
+        Task<Group> GetMessageGroup(string groupName);
         Task<Message> GetMessage(int id);
-        Task<PagedList<Message>> GetMessagesFprUser(MessageParams prams);
-        Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId);
+        Task<PagedList<Message>> GetMessagesForUser(MessageParams prams);
+        Task<IEnumerable<Message>> GetMessageThread(string userName, string recipientUserName);
         Task<Message> GetMessageThread(int messagId);
 
     }
 
     public class MessageRepository : Repository<Message>, IMessageRepository
     {
-        private readonly DatingContext _contex;
+        private readonly DatingContext _context;
 
         public MessageRepository(DatingContext contex) : base(contex)
         {
-            _contex = contex;
+            _context = contex;
+        }
+
+        public async Task AddGroup(Group group)
+        {
+            await _context.Groups.AddAsync(group);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Connection> GetConnection(string connectionId)
+        {
+            return await _context.Connections.FindAsync(connectionId);
         }
 
         public async Task<Message> GetMessage(int id)
         {
-            return await _contex.Message.FirstOrDefaultAsync(f => f.Id == id);
+            return await _context.Message
+                .Include(i => i.Sender)
+                .Include(i => i.Recipient)
+                .FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public async Task<PagedList<Message>> GetMessagesFprUser(MessageParams prams)
+        public async Task<Group> GetMessageGroup(string groupName)
         {
-            var messages = _contex.Message.Include(i => i.Sender).ThenInclude(t => t.Photos)
-                .Include(i => i.Recipient).ThenInclude(t => t.Photos)
+            return await _context.Groups
+                .Include(i => i.Connections)
+                .FirstOrDefaultAsync(f => f.Name == groupName);
+        }
+
+        public async Task<PagedList<Message>> GetMessagesForUser(MessageParams prams)
+        {
+            var query = _context.Message
+                .OrderByDescending(o => o.MessageSent)
                 .AsQueryable();
 
-            switch (prams.MessageContainer)
+            query = prams.Container switch
             {
-                case "Inbox":
-                    messages = messages.Where(w => w.Recipientid == prams.UserId 
-                    && !w.RecipientDeleted);
-                    break;
-                case "Outbox":
-                    messages = messages.Where(w => w.SenderId == prams.UserId 
-                        && !w.SenderDeleted);
-                    break;
-                default:
-                    messages = messages.Where(w => w.Recipientid == prams.UserId 
-                    && !w.IsRead && !w.RecipientDeleted);
-                    break;
-            }
-            messages = messages.OrderBy(o => o.MessageSent);
+                "Inbox" => query.Where(w => w.Recipient.UserName == prams.Username
+                    && !w.RecipientDeleted),
+                "Outbox" => query.Where(w => w.Sender.UserName == prams.Username
+                    && !w.SenderDeleted),
+                _ => query.Where(w => w.Recipient.UserName == prams.Username
+                          && !w.RecipientDeleted && w.DateRead == null)
+            };
 
-            return await PagedList<Message>.CreateAsync(messages,
+            
+           
+            return await PagedList<Message>.CreateAsync(query,
                 prams.PageNumber, prams.PageSize);
         }
 
-        public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+        public async Task<IEnumerable<Message>> GetMessageThread(string currentUsername, string recipientUserName)
         {
-            var messages = await _contex.Message.Include(i => i.Sender).ThenInclude(t => t.Photos)
+            var messages = _context.Message
+                .Include(i => i.Sender).ThenInclude(t => t.Photos)
                 .Include(i => i.Recipient).ThenInclude(t => t.Photos)
-                .Where(w => (w.Recipientid == userId && w.SenderId == recipientId && !w.RecipientDeleted)
-                || (w.Recipientid == recipientId && w.SenderId == userId && !w.SenderDeleted))
-                .OrderByDescending(o => o.MessageSent)
-                .ToListAsync();
+                .Where(w =>
+                        (w.Recipient.UserName == currentUsername
+                         && w.Sender.UserName == recipientUserName
+                         && !w.RecipientDeleted)
+                        ||
+                        (w.Recipient.UserName == recipientUserName
+                         && w.Sender.UserName == currentUsername
+                         && !w.SenderDeleted)
+                       );
+                
+            var unreadMessages = messages.Where(m => m.DateRead == null
+                && m.Recipient.UserName == currentUsername).ToList();
+            
+            if (unreadMessages != null && unreadMessages.Any())
+            {
+                foreach (var unreadMessage in unreadMessages)
+                {
+                    unreadMessage.DateRead = System.DateTime.UtcNow;
+                    unreadMessage.IsRead = true;
+                }
+                await _context.SaveChangesAsync();
+            }
 
-            return messages;
+            return await messages.OrderBy(o => o.MessageSent).ToListAsync(); ;
         }
+
 
         public async Task<Message> GetMessageThread(int messagId)
         {
-            return await _contex.Message.Include(i => i.Sender).ThenInclude(t => t.Photos)
+            return await _context.Message.Include(i => i.Sender).ThenInclude(t => t.Photos)
                 .Include(i => i.Recipient).ThenInclude(t => t.Photos)
                 .FirstOrDefaultAsync(f => f.Id == messagId);
+        }
+
+        public async Task RemoveConnection(Connection connection)
+        {
+            _context.Connections.Remove(connection);
+            await _context.SaveChangesAsync();
         }
     }
 }

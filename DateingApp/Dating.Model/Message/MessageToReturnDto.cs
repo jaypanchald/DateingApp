@@ -8,11 +8,15 @@ namespace Dating.Model.Message
 
         public int SenderId { get; set; }
 
+        public string SenderUsername { get; set; }
+
         public string SenderKnownAs { get; set; }
 
         public string SenderPhotoUrl { get; set; }
 
-        public int RecipientId { get; set; }
+        public int Recipientid { get; set; }
+
+        public string RecipientUsername { get; set; }
 
         public string RecipientKnownAs { get; set; }
 
@@ -25,5 +29,9 @@ namespace Dating.Model.Message
         public DateTime? DateRead { get; set; }
 
         public DateTime MessageSent { get; set; }
+
+        public bool SenderDeleted { get; set; }
+
+        public bool RecipientDeleted { get; set; }
     }
 }

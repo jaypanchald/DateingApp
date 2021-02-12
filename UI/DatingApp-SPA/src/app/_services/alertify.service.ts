@@ -29,7 +29,7 @@ export class AlertyfyService {
   }
 
   info(message: string) {
-    alertify.message(message);
+    alertify.message(message, );
   }
 
 }

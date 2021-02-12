@@ -1,17 +1,23 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { PaginatedResult } from '../_models/pagination';
 import { map } from 'rxjs/operators';
 import { Message } from '../_models/message';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   baseUrl = environment.apiUrl;
+  hubUrl = environment.hubUrl;
+  private hubConnection: HubConnection;
+  private messageThreadSource = new BehaviorSubject<Message[]>([]);
+  messageThred$ = this.messageThreadSource.asObservable();
+
   constructor(private http: HttpClient) { }
 
   getUsers(page?, itemsPerPage?, userParams?, likerParam?): Observable<PaginatedResult<User[]>> {
@@ -74,46 +80,8 @@ export class UserService {
       '/LikeUser/' + recipientId, {});
   }
 
-  getMessages(id: number, page?, itemsPerPage?, messageContainer?) {
-    const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<Message[]>();
-
-    let params = new HttpParams();
-
-    params = params.append('MessageContainer', messageContainer);
-
-    if (page != null && itemsPerPage != null) {
-      params = params.append('pageNumber', page);
-      params = params.append('pageSize', itemsPerPage);
-    }
-
-    return this.http.get<Message[]>(this.baseUrl + 'message/GetMessagesForUser/' + id,
-      { observe: 'response', params })
-      .pipe(
-        map(response => {
-          paginatedResult.result = response.body;
-          if (response.headers.get('Pagination') !== null) {
-            paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
-          }
-          return paginatedResult;
-        })
-      );
-  }
-
-  getMessageThread(id: number, recipientid: number) {
-    return this.http.get<Message[]>(this.baseUrl + 'message/thread/' + id + '/' + recipientid);
-  }
-
-  sendMessage(id: number, message: Message) {
-    return this.http.post(this.baseUrl + 'Message/' + id, message);
-  }
-
-  deleteMessage(id: number, userId: number) {
-    return this.http.post(this.baseUrl + 'Message/DeleteMessage/' +
-    userId + '/' + id, {});
-  }
-
   markAsRead(userId: number, messageId: number) {
     this.http.post(this.baseUrl + 'Message/markMessageRead/' +
-    userId + '/' +  messageId, {}).subscribe();
+      userId + '/' + messageId, {}).subscribe();
   }
 }

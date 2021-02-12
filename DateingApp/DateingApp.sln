@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dating.Model", "Dating.Mode
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{DFC9A0F7-3B94-486F-9976-7BE46F21FAFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dating.Repository", "Dating.Repository\Dating.Repository.csproj", "{9A10CA85-0E8C-496A-B274-6250DB0F7404}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dating.Repository", "Dating.Repository\Dating.Repository.csproj", "{9A10CA85-0E8C-496A-B274-6250DB0F7404}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{68211F35-DADC-49CA-9C27-0929A49DC966}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dating.Console", "Dating.Console\Dating.Console.csproj", "{6D4FBAF6-F340-4A51-87FE-7E9E0E880A91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +53,10 @@ Global
 		{9A10CA85-0E8C-496A-B274-6250DB0F7404}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A10CA85-0E8C-496A-B274-6250DB0F7404}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A10CA85-0E8C-496A-B274-6250DB0F7404}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D4FBAF6-F340-4A51-87FE-7E9E0E880A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D4FBAF6-F340-4A51-87FE-7E9E0E880A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D4FBAF6-F340-4A51-87FE-7E9E0E880A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D4FBAF6-F340-4A51-87FE-7E9E0E880A91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +64,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{53DAE6F8-9217-4929-8AAC-D983E8568966} = {C30CBF81-A1A6-4538-AA75-5FE1DB2A397B}
 		{9A10CA85-0E8C-496A-B274-6250DB0F7404} = {DFC9A0F7-3B94-486F-9976-7BE46F21FAFE}
+		{6D4FBAF6-F340-4A51-87FE-7E9E0E880A91} = {68211F35-DADC-49CA-9C27-0929A49DC966}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB0B27BF-53D1-4235-B9F0-AB4FA4536C54}

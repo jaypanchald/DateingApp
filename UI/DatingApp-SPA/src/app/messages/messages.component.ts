@@ -5,6 +5,7 @@ import { PaginatedResult, Pagination } from '../_models/pagination';
 import { AlertyfyService } from '../_services/alertify.service';
 import { AuthService } from '../_services/auth.service';
 import { UserService } from '../_services/user.service';
+import { MessageService } from '../_services/message.service';
 
 @Component({
   selector: 'app-messages',
@@ -14,10 +15,11 @@ import { UserService } from '../_services/user.service';
 export class MessagesComponent implements OnInit {
   messages: Message[];
   pagination: Pagination;
-  messageContainer = 'Unread';
+  container = 'Unread';
+  loading = false;
 
-  constructor(private userService: UserService,
-    private authService: AuthService,
+  constructor(
+    private messageService: MessageService,
     private route: ActivatedRoute,
     private alertify: AlertyfyService) { }
 
@@ -29,22 +31,21 @@ export class MessagesComponent implements OnInit {
   }
 
   loadMessages() {
-    this.userService.getMessages(this.authService.decodeToken.nameid,
+    this.loading = true;
+    this.messageService.getMessages(
       this.pagination.currentPage,
       this.pagination.itemsPerPage,
-      this.messageContainer)
-      .subscribe(
-        (res: PaginatedResult<Message[]>) => {
-          this.messages = res.result;
-          this.pagination = res.pagination;
-        }, error => {
-          this.alertify.error(error);
-        });
+      this.container)
+      .subscribe(res => {
+        this.messages = res.result;
+        this.pagination = res.pagination;
+        this.loading = false;
+      });
   }
 
   deleteMessage(id: number) {
     this.alertify.confirm('Are you sure you want to delete this message?', () => {
-      this.userService.deleteMessage(id, this.authService.decodeToken.nameid)
+      this.messageService.deleteMessage(id)
         .subscribe(() => {
           this.messages.splice(this.messages.findIndex(m => m.id === id), 1);
           this.alertify.success('Message has been deleted');
@@ -58,5 +59,4 @@ export class MessagesComponent implements OnInit {
     this.pagination.currentPage = event.page;
     this.loadMessages();
   }
-
 }

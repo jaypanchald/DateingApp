@@ -15,6 +15,7 @@ namespace Dating.Repository.Repository
         Task<PagedList<User>> GetFilterUser(UserParams param);
         Task<User> GetUser(int id);
         Task<bool> updateLastActive(int id);
+        Task<User> GetUserbyUsername(string username);
     }
     public class UserRepository : Repository<User>, IUserRepository
     {
@@ -106,6 +107,11 @@ namespace Dating.Repository.Repository
                 }
             }
             return false;
+        }
+
+        public async Task<User> GetUserbyUsername(string username)
+        {
+            return await _contex.Users.FirstOrDefaultAsync(f => f.UserName == username);
         }
     }
 }
